@@ -1,5 +1,5 @@
 <script  setup lang = "ts" >
-import { NSpace, NH1, NH5, NButton,NForm,NFormItem,NInput} from 'naive-ui';
+import { NSpace, NH1, NH5, NButton,NForm,NFormItem,NInput,NA} from 'naive-ui';
 import {ref,computed} from 'vue';
 import {useAuthStore} from '@/stores/auth';
 
@@ -8,17 +8,22 @@ interface LoginForm {
     password: string;
 }   
 const formRef = ref<LoginForm | null>(null);
-const formValue = ref<LoginForm>({username: 'admin', password: 'password'});
+const formValue = ref<LoginForm>({username: 'admin', password: 'admin'});
 
 const authStore = useAuthStore();
 const loading = ref(false);
 const disabled = computed(
     () => formValue.value.username === ""|| formValue.value.password === ""
 );
-const handleLogin = async() => {
+const handleLogin = async () => {
     loading.value = true;
-    await authStore.login(formValue.value.username, formValue.value.password);
-    loading.value = false;
+    try {
+        await authStore.login(formValue.value.username, formValue.value.password);
+    } catch (error) {
+        console.error('Login failed:', error);
+    } finally {
+        loading.value = false;
+    }
 };
 
 </script>

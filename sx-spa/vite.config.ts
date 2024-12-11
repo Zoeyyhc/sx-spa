@@ -20,12 +20,13 @@ export default defineConfig({
     },
   },
   server:{
-    // port:8080,
+    port:8080,
     proxy:{
-      '/api':{
-        target:'http://localhost:3000/api',
+      '/api/v1':{
+        target:'http://localhost:3000/api/v1',
         changeOrigin:true, 
-        rewrite: (path) => path.replace(/^\/api/, "")
+        rewrite: (path) => path.replace(/^\/api\/v1/, '')
+        // rewrite: (path) => path.replace(/^\/api/, "")
       },
     },
   },
