@@ -7,6 +7,6 @@ export interface User{
     created_at: string;
     wx?: string;
     uni7?: string;
-    permission: string;
+    permission?: [string];
     ab?: string;
 }
