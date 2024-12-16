@@ -9,6 +9,6 @@ class CustomEncoder(json.JSONEncoder):
         elif isinstance(obj, SecretStr):
             return None
         elif isinstance(obj, BaseModel):
-            return obj.model_dump()
+            return obj.dict(exclude_defaults=True)
         else:
             return super().default(obj)

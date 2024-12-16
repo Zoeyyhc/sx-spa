@@ -1,0 +1,55 @@
+from typing import List
+
+from app.core.service import BaseService
+from app.user.model import User, get_hashed_password
+from flask_jwt_extended import get_current_user
+from mongoengine.errors import NotUniqueError
+from app.exceptions.database_exceptions import DuplicateRecord
+from app.exceptions.permission_exceptions import PermissionDenied
+from app.campus.model import Campus
+
+
+class UserService(BaseService):
+    def __init__(self, user):
+        super().__init__(UserService.__name__, user)
+
+    def list_users(self, user_type: str = None, campus: Campus = None) -> List[User]:
+        self.logger.info("Fetching users")
+        querys = {}
+        if user_type is not  None: 
+            querys["_cls"] = "User." + user_type.lower().capitalize()
+        if campus is not None:
+            querys["campus"] = campus
+        return list(User.objects(**querys))
+    
+    def register_user(self, user: User):
+        try:
+            user.password = get_hashed_password(user.password)
+            user.save()
+            return user
+        except NotUniqueError:
+            raise DuplicateRecord("User already exists")
+    
+    def get_user(self, username):
+        if self.user.username == username or (
+            self.user._cls == "User.Admin" and "users_admin" in self.user.permissions
+        ):
+            return User.objects(username=username).first_or_404("User not exists")
+        else:
+            raise PermissionDenied()
+        
+    def delete_user(self, username):
+        if self.user.username == username or (
+            self.user._cls == "User.Admin" and "users_admin" in self.user.permissions
+        ):
+            user = User.objects(username=username).first_or_404("User not exists")
+            user.delete()
+        else:
+            raise PermissionDenied()
+        
+ 
+def user_service():
+    return UserService(get_current_user())
+
+def unauthorized_user_service():
+    return UserService(None)
