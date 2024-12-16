@@ -5,7 +5,7 @@ from .schema import CampusSchema, CampusListSchema
 
 api: Namespace = Namespace("campus")
 
-@api.route("/")
+@api.route("")
 # class CampusListApi(Resource):
 #     def get(self) -> list[Campus]:
 #         campus_list = [campus for campus in Campus.objects()]

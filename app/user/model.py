@@ -18,8 +18,8 @@ def check_password(plain_text_password, hashed_password) -> bool:
         hashed_password.encode("utf-8")
     )
 class User(Document):
-    username = StringField(required=True)
-    password = StringField(required=True, )
+    username = StringField(required=True, unique=True, max_length=36)
+    password = StringField(required=True)
     display_name = StringField()
     mobile = StringField()
     campus = ReferenceField(Campus, reverse_delete_rule=CASCADE) # delete users when campus is deleted
@@ -34,4 +34,5 @@ class Admin(User):
     permissions = ListField(StringField(),required=True,default=[])
 
 class Teacher(User):
-    adn = StringField()
+    abn = StringField(required=False)
+

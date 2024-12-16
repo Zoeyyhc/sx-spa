@@ -22,29 +22,39 @@ admin = Admin(
     username="admin",
     password=get_hashed_password("admin"),
     display_name="Admin1",
-    permissions=["sys-owner","campus_admin","course_admin"],
+    permissions=["sys_owner","campus_admin","course_admin","users_admin"],
     mobile="123456789",
     campus = clayton_campus,
 )
 admin.save()
 
+support = Admin(
+    username="support",
+    display_name="Support A",
+    password=get_hashed_password("support"),
+    mobile="123",
+    permissions=["course_admin"],
+    campus=clayton_campus,
+)
+support.save()
+
 student = Student(
-    username="student_1234555",
+    username="student",
     password=get_hashed_password("student"),
     display_name="Jone smith",
     campus=clayton_campus,
     wx="student's wx",
     mobile="123456789",
+    uni = "Monash University"   
 )
 
 student.save()
 
 teacher = Teacher(
-    username="teacher_1234",
+    username="teacher",
     password=get_hashed_password("teacher"),
-    display_name="Zoey",
-    campus=clayton_campus,
-    adn="t4371999"
+    display_name="Teacher A",
+    campus=clayton_campus
 )
 
 teacher.save()

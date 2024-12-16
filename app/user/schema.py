@@ -1,32 +1,63 @@
-from pydantic import BaseModel, Field, field_validator,SecretStr
-from typing import Optional
-from app.core.type import PydanticObjectId
-from app.campus.model import Campus
-from bson import ObjectId
+from app.core.types import MongoModel, PydanticObjectId, MongoListModel
+from pydantic import SecretStr, validator
 from datetime import datetime
+from typing import List, Optional   
 
-class UserSchema(BaseModel):
+class UserSchema(MongoModel):
     id: PydanticObjectId
     username: str
     password: SecretStr
     display_name: str
-    mobile: Optional[str] = None
+    mobile: Optional[str]
     campus: PydanticObjectId
     created_at: datetime
+    user_type: str
 
-    @field_validator("id", mode="before")
-    def validate_id(cls, v):
-        if isinstance(v, ObjectId):
-            return str(v)
-        return v   
-
-    @field_validator("campus", mode="before")
-    def validate_campus(cls, v):
-        if isinstance(v, ObjectId):
-            return str(v)
-        if isinstance(v, Campus):
-            return str(v.id)
-        return v
+    @validator("user_type")
+    def extract_user_type(cls, v):
+        return v.split(".")[-1].lower()
 
     class Config:
-        from_attributes = True
+        orm_mode = True
+        fields = {"user_type": "_cls"}
+
+class UserListSchema(MongoModel):
+    __root__: List[UserSchema]
+
+class UserCreateSchema(MongoModel):
+    username: str
+    password: str
+    display_name: str
+    mobile: str
+    campus: PydanticObjectId
+
+class StudentSchema(UserSchema):
+    wx: str
+    uni: str
+
+class StudentCreateSchema(UserCreateSchema):
+    wx: str
+    uni: str
+
+class TeacherSchema(UserSchema):
+    abn: str = None
+
+class TeacherCreateSchema(UserCreateSchema):
+    abn: str = None
+
+
+class AdminSchema(UserSchema):
+    permissions: List[str]
+
+class AdminCreateSchema(UserCreateSchema):
+    permissions: List[str]
+
+class AdminListSchema(MongoListModel):
+    __root__: List[AdminSchema]
+
+class StudentListSchema(MongoListModel):
+    __root__: List[StudentSchema]
+    
+class TeacherListSchema(MongoListModel):
+    __root__: List[TeacherSchema]
+
