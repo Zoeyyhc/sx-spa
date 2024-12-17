@@ -5,4 +5,6 @@ venv
 docker
 logs
 node_modules
-
+pnpm-lock.yaml
+yarn.lock
+package.json

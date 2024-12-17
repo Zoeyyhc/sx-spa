@@ -9,4 +9,5 @@ export interface User{
     uni7?: string;
     permission?: [string];
     ab?: string;
+    user_type: string;
 }
