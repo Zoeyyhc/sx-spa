@@ -5,6 +5,7 @@ import hashlib
 import bcrypt
 import base64
 from datetime import datetime
+from app.user.schema import UserSchema, StudentSchema, AdminSchema, TeacherSchema
 
 def get_hashed_password(plain_text_password) -> str:
     return bcrypt.hashpw(
@@ -25,14 +26,26 @@ class User(Document):
     campus = ReferenceField(Campus, reverse_delete_rule=CASCADE) # delete users when campus is deleted
     created_at = DateTimeField(default=datetime.utcnow())
     meta = {"allow_inheritance": True,"indexes":["username","campus"]}
+
+    def to_dict(self):
+        return UserSchema.from_orm(self).dict()
+
  
 class Student(User):
     wx = StringField()
     uni = StringField()
 
+    def to_dict(self):
+        return StudentSchema.from_orm(self).dict()
+
+
 class Admin(User):
     permissions = ListField(StringField(),required=True,default=[])
+    def to_dict(self):
+        return AdminSchema.from_orm(self).dict()
 
 class Teacher(User):
     abn = StringField(required=False)
+    def to_dict(self):
+        return TeacherSchema.from_orm(self).dict()
 

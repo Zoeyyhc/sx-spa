@@ -15,7 +15,8 @@ auth_api: Namespace = Namespace("auth")
 class UserAuthInfo(Resource):
     @jwt_required()
     def get(self):
-        return UserSchema.from_orm(current_user)
+        return current_user.to_dict()
+    
 @auth_api.route("/login")
 class Login(Resource):
     def post(self):
@@ -24,9 +25,12 @@ class Login(Resource):
         if not username or not password:
             return {"message": "username or password is missing"}, 400
 
-        user = User.objects(username=username).first_or_404(message="User not found")
+        user_list = User.objects(username=username)
+        if len(user_list) == 0:
+            return {"code": 401, "message": "Username or Password is incorrect"}, 401
+        user = user_list[0]
         if not check_password(password, user.password):
-            return {"message": "Username or Password is incorrect"}, 401
+            return {"code": 401, "message": "Username or Password is incorrect"}, 401
 
         jwt_token = create_access_token(
             identity=str(user.id), expires_delta=datetime.timedelta(days=30)
