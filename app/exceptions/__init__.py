@@ -10,7 +10,7 @@ def register_resources_exception_handler(api):
         return {"code": 403, "message": getattr(e, "description", str(e))}, 403
     @api.errorhandler(HTTPException)
     def handle_default_http_exception(e: HTTPException):
-         return {
+        return {
             "code": e.code,
             "message": getattr(e, "description", str(e)),
-        }
+        },e.code

@@ -4,6 +4,7 @@ import {ref,computed} from 'vue';
 import {useAuthStore} from '@/stores/auth';
 import {useRouter} from "vue-router";
 
+
 interface LoginForm {
     username: string;
     password: string;
@@ -18,10 +19,13 @@ const disabled = computed(
     () => formValue.value.username === ""|| formValue.value.password === ""
 );
 const handleLogin = async() => {
+    try {
     loading.value = true;
     await authStore.login(formValue.value.username, formValue.value.password);
-    loading.value = false;
     router.replace("/");
+  } finally {
+    loading.value = false;
+  }
 };
 
 </script>

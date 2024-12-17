@@ -1,7 +1,10 @@
 .vscode/
 __pycache__/
 myenv
+venv
 docker
 logs
 node_modules
-
+pnpm-lock.yaml
+yarn.lock
+package.json

@@ -1,15 +1,17 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
-import {darkTheme, NConfigProvider, NGlobalStyle} from 'naive-ui'
+import { darkTheme, NConfigProvider, NGlobalStyle, NMessageProvider } from 'naive-ui'
+import MessageContent from './components/MessageContent.vue';
 </script>
 
 <template>
   <n-config-provider :theme="darkTheme">
-    <n-global-style />
-
-    <RouterView />
+    <n-message-provider>
+      <n-global-style />
+      <MessageContent />
+      <RouterView />
+    </n-message-provider>
   </n-config-provider>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

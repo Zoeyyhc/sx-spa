@@ -30,7 +30,7 @@ class UserService(BaseService):
         except NotUniqueError:
             raise DuplicateRecord("User already exists")
     
-    def get_user(self, username):
+    def get_user(self, username) -> User  :
         if self.user.username == username or (
             self.user._cls == "User.Admin" and "users_admin" in self.user.permissions
         ):
