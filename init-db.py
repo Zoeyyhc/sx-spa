@@ -22,7 +22,7 @@ admin = Admin(
     username="admin",
     password=get_hashed_password("admin"),
     display_name="Admin1",
-    permissions=["sys_owner","campus_admin","course_admin","users_admin"],
+    permissions=["sys_owner","campus_admin","course_admin","user_admin","order_admin"],
     mobile="123456789",
     campus = clayton_campus,
 )
@@ -33,7 +33,7 @@ support = Admin(
     display_name="Support A",
     password=get_hashed_password("support"),
     mobile="123",
-    permissions=["course_admin"],
+    permissions=["course_admin","user_admin","order_admin"],
     campus=clayton_campus,
 )
 support.save()

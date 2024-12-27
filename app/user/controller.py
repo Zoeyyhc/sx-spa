@@ -4,11 +4,12 @@ from flask_jwt_extended import create_access_token, set_access_cookies, jwt_requ
 from .model import User, check_password, Student, Admin, Teacher
 import datetime
 from .schema import UserSchema, UserListSchema, StudentSchema, StudentCreateSchema, AdminCreateSchema, AdminSchema, TeacherCreateSchema, TeacherSchema,\
-    AdminListSchema, StudentListSchema, TeacherListSchema
+    AdminListSchema, StudentListSchema, TeacherListSchema, UserPutSchema    
 from app.user.service import unauthorized_user_service, user_service
 from app.user import permission_required
 from app.campus.model import Campus
 from app.exceptions.database_exceptions import DuplicateRecord
+from flask_pydantic import validate 
 
 auth_api: Namespace = Namespace("auth")
 @auth_api.route("/")
@@ -68,6 +69,10 @@ class UserApi(Resource):
     @jwt_required()
     def delete(self, username):
         user_service().delete_user(username=username)
+        return
+    @jwt_required()
+    def put(self, username):
+        user_service().update_user(username, **request.json)
         return
     
 students_api: Namespace = Namespace("students")

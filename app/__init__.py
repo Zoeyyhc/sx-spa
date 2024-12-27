@@ -8,8 +8,10 @@ from flask_restx import Api
 from flask_jwt_extended import JWTManager
 from app.campus.controller import api as campus_api
 from app.user.controller import auth_api, users_api, students_api, admins_api, teachers_api
+from app.course.controller import api as courses_api
+from app.order.controller import api as orders_api
 from app.user.__init__ import register_user_lookup
-from app.core.converter import CustomEncoder
+from app.core.encoder import CustomEncoder
 from app.exceptions import register_resources_exception_handler
 
 
@@ -24,6 +26,9 @@ api.add_namespace(users_api)
 api.add_namespace(students_api)
 api.add_namespace(admins_api)
 api.add_namespace(teachers_api)
+api.add_namespace(courses_api)
+api.add_namespace(orders_api)
+
 
 def create_app():
     app = Flask(os.getenv("FLASK_APP_NAME"))

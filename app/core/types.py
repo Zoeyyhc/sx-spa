@@ -1,8 +1,10 @@
-from typing import Any
+from typing import Any, Optional
 from bson import ObjectId
 from flask_mongoengine import Document
 from mongoengine.base.datastructures import BaseList, LazyReference
 from pydantic import BaseModel
+from pydantic.main import ModelMetaclass
+
 class PydanticObjectId(str):
     @classmethod
     def __get_validators__(cls):
@@ -29,3 +31,14 @@ class MongoModel(BaseModel):
 class MongoListModel(MongoModel):
     def dict(self, *args, **kwargs):
         return super().dict(*args, **kwargs)["__root__"]
+    
+class AllOptional(ModelMetaclass):
+    def __new__(self, name, bases, namespace, **kwargs):
+        annotations = namespace.get("__annotations__", {})
+        for base in bases:
+            annotations.update(base.__annotations__)
+        for field in annotations:
+            if not field.startswith("__"):
+                annotations[field] = Optional[annotations[field]]
+        namespace["__annotations__"] = annotations
+        return super().__new__(self, name, bases, namespace, **kwargs)
