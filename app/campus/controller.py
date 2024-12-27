@@ -1,7 +1,7 @@
 from flask_restx import Namespace, Resource
 from flask import jsonify
 from .model import Campus
-from .schema import CampusSchema, CampusListSchema  
+from app.campus.schema import CampusSchema, CampusListSchema  
 
 api: Namespace = Namespace("campus")
 

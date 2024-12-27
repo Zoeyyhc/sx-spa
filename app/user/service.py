@@ -7,6 +7,7 @@ from mongoengine.errors import NotUniqueError
 from app.exceptions.database_exceptions import DuplicateRecord
 from app.exceptions.permission_exceptions import PermissionDenied
 from app.campus.model import Campus
+from app.user.schema import UserPutSchema
 
 
 class UserService(BaseService):
@@ -46,8 +47,22 @@ class UserService(BaseService):
             user.delete()
         else:
             raise PermissionDenied()
+    
+    def update_user(self, username: str, **kwargs):
+        if "password" in kwargs:
+            kwargs["password"] = get_hashed_password(kwargs["password"])
+        if self.user._cls == "User.Admin" and "sys_ownser" in self.user.permissions:
+            user = User.objects(username=username).first_or_404("User not exists")
+            user.update_from_dict(**kwargs)
+        elif self.user.username == username or (
+            self.user._cls == "User.Admin" and "user_admin" in self.user.permissions
+        ):
+            user = User.objects(username=username).first_or_404("User not exists")
+            kwargs.pop("permissions", None)
+            user.update_from_dict(**kwargs)
         
- 
+
+            
 def user_service():
     return UserService(get_current_user())
 

@@ -5,7 +5,7 @@ import hashlib
 import bcrypt
 import base64
 from datetime import datetime
-from app.user.schema import UserSchema, StudentSchema, AdminSchema, TeacherSchema
+from app.user.schema import UserSchema, StudentSchema, AdminSchema, TeacherSchema, UserPutSchema,StudentPutSchema,TeacherPutSchema, AdminPutSchema
 
 def get_hashed_password(plain_text_password) -> str:
     return bcrypt.hashpw(
@@ -30,6 +30,11 @@ class User(Document):
     def to_dict(self):
         return UserSchema.from_orm(self).dict()
 
+    def update_from_dict(self, **kwargs):
+        if len(kwargs) == 0:
+            return
+        user = UserPutSchema(**kwargs)
+        self.update(**user.dict(exclude_defaults=True, exclude_none=True))
  
 class Student(User):
     wx = StringField()
@@ -38,14 +43,31 @@ class Student(User):
     def to_dict(self):
         return StudentSchema.from_orm(self).dict()
 
+    def update_from_dict(self, **kwargs):
+        if len(kwargs) == 0:
+            return
+        user = StudentPutSchema(**kwargs)
+        self.update(**user.dict(exclude_defaults=True, exclude_none=True))
 
 class Admin(User):
     permissions = ListField(StringField(),required=True,default=[])
     def to_dict(self):
         return AdminSchema.from_orm(self).dict()
+    
+    def update_from_dict(self, **kwargs):
+        if len(kwargs) == 0:
+            return
+        user = AdminPutSchema(**kwargs)
+        self.update(**user.dict(exclude_defaults=True, exclude_none=True))
 
 class Teacher(User):
     abn = StringField(required=False)
     def to_dict(self):
         return TeacherSchema.from_orm(self).dict()
+    
+    def update_from_dict(self, **kwargs):
+        if len(kwargs) == 0:
+            return
+        user = TeacherPutSchema(**kwargs)
+        self.update(**user.dict(exclude_defaults=True, exclude_none=True))
 

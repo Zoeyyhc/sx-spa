@@ -1,6 +1,9 @@
 import datetime
 import json
-from pydantic import BaseModel, SecretStr   
+from uuid import UUID
+
+from pydantic import BaseModel, SecretStr
+
 
 class CustomEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -10,5 +13,7 @@ class CustomEncoder(json.JSONEncoder):
             return None
         elif isinstance(obj, BaseModel):
             return obj.dict(exclude_defaults=True)
+        elif isinstance(obj, UUID):
+            return str(obj)
         else:
             return super().default(obj)

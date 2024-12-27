@@ -1,4 +1,4 @@
-from app.core.types import MongoModel, PydanticObjectId, MongoListModel
+from app.core.types import MongoModel, PydanticObjectId, MongoListModel, AllOptional
 from pydantic import SecretStr, validator
 from datetime import datetime
 from typing import List, Optional   
@@ -31,11 +31,21 @@ class UserCreateSchema(MongoModel):
     mobile: str
     campus: PydanticObjectId
 
+class UserPutSchema(MongoModel, metaclass=AllOptional):
+    password: str
+    display_name: str
+    mobile: str
+
+    
 class StudentSchema(UserSchema):
     wx: str
     uni: str
 
 class StudentCreateSchema(UserCreateSchema):
+    wx: str
+    uni: str
+
+class StudentPutSchema(UserPutSchema, metaclass=AllOptional):
     wx: str
     uni: str
 
@@ -45,6 +55,8 @@ class TeacherSchema(UserSchema):
 class TeacherCreateSchema(UserCreateSchema):
     abn: str = None
 
+class TeacherPutSchema(UserPutSchema, metaclass=AllOptional):
+    abn: str = None
 
 class AdminSchema(UserSchema):
     permissions: List[str]
@@ -52,6 +64,8 @@ class AdminSchema(UserSchema):
 class AdminCreateSchema(UserCreateSchema):
     permissions: List[str]
 
+class AdminPutSchema(UserPutSchema, metaclass=AllOptional):
+    permissions: List[str]
 class AdminListSchema(MongoListModel):
     __root__: List[AdminSchema]
 
