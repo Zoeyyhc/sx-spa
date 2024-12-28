@@ -2,6 +2,7 @@ from app.core.types import MongoModel, PydanticObjectId, MongoListModel, AllOpti
 from pydantic import SecretStr, validator
 from datetime import datetime
 from typing import List, Optional   
+from app.course.schema import CourseBasicInfoSchema
 
 class UserSchema(MongoModel):
     id: PydanticObjectId
@@ -35,11 +36,20 @@ class UserPutSchema(MongoModel, metaclass=AllOptional):
     password: str
     display_name: str
     mobile: str
+ 
 
-    
+class StudentEnrolledCoursesSchema(MongoModel):
+    course_id: PydanticObjectId
+    course_name: str
+
+    class Config:
+        orm_mode = True
+        fields = {"course_id": "id", "course_name": "name"}
+
 class StudentSchema(UserSchema):
     wx: str
     uni: str
+    enrolled_courses: List[StudentEnrolledCoursesSchema]
 
 class StudentCreateSchema(UserCreateSchema):
     wx: str

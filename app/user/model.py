@@ -39,6 +39,7 @@ class User(Document):
 class Student(User):
     wx = StringField()
     uni = StringField()
+    enrolled_courses = ListField(ReferenceField("Course"), default=[])
 
     def to_dict(self):
         return StudentSchema.from_orm(self).dict()
