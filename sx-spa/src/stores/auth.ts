@@ -16,6 +16,9 @@ export const useAuthStore = defineStore(
     getters: {
         getUserInfo: (state) => state.userInfo,
         isAdmin: (state) => state.userInfo?.user_type === "admin",
+        hasPermission: (state) => (permission: string) => {
+            return state.userInfo?.permissions?.includes(permission) || false;
+          },
         isLoggedin: (state) => state.userInfo !== null,
     },
     actions:{

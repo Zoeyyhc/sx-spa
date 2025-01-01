@@ -13,7 +13,7 @@ class LectureSchema(MongoModel):
     scheduled_time: datetime
 
 class LectureCreateSchema(LectureSchema):
-    id: UUID = uuid.uuid4()
+    id: UUID = None
 
 class LecturePutSchema(LectureSchema, metaclass = AllOptional):
     pass

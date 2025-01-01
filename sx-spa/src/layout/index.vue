@@ -3,6 +3,12 @@ import { NLayout } from 'naive-ui';
 import LayoutContent from '@/layout/layoutContent.vue';
 import LayoutSidebar from '@/layout/LayoutSidebar.vue';
 import LayoutHeader from '@/layout/LayoutHeader.vue';
+import { useAuthStore } from "@/stores/auth";
+import { onMounted } from "vue";
+const authStore = useAuthStore();
+onMounted(() => {
+  authStore.reload();
+});
 </script>
 
 

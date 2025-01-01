@@ -4,6 +4,7 @@ from app.course.schema import CourseCreateSchema, CoursePutSchema, LectureSchema
 from app.campus.model import Campus
 from app.course.model import Course, Lecture
 from flask_jwt_extended import get_current_user
+import uuid
 
 class CourseService(BaseService):
 
@@ -54,6 +55,7 @@ class CourseService(BaseService):
 
     def add_lecture(self, course_id: str, lecture: LectureCreateSchema):
         self.logger.info("Adding lecture")
+        lecture.id = uuid.uuid4()
         course: Course = Course.objects(id=course_id).first_or_404("Course not exists")
         course.update(push__lectures=lecture.dict(exclude_none=True))
         return str(lecture.id)
