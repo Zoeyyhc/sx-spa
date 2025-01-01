@@ -9,6 +9,7 @@ const prop = defineProps<{
     course_id: string;
     lecture_id: string;
     isAdmin: boolean;
+    onUpdate: () => void;
 
 }>();
 
@@ -16,6 +17,7 @@ const scheduled_time = computed(() => new Date(prop.lecture.scheduled_time ));
 
 const handleDelete = async () => {
     await deleteLecture(prop.course_id, prop.lecture_id);
+    prop.onUpdate();
 }
 
 console.log(prop.isAdmin);

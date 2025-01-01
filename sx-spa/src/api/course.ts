@@ -64,9 +64,9 @@ export interface EnrolledStudent {
 
 export interface CreateLectureData {
   title: string;
-  streaming_url: string;
+  stream_url: string;
   recording_url: string;
-  scheduled_at: string;
+  scheduled_time: string;
 }
 
 export const useCourse = (course_id: string) =>
@@ -75,3 +75,11 @@ export const useCourse = (course_id: string) =>
 export const deleteLecture = async(course_id: string, lecture_id: string) => {
   await axios.delete(`/courses/${course_id}/lectures/${lecture_id}`);
 }
+
+export const createLecture = async (
+  course_id: string,
+  data: CreateLectureData
+) =>
+  await (
+    await axios.post<string>(`/courses/${course_id}/lectures`, data)
+  ).data;

@@ -5,8 +5,9 @@ import {NSpin, NSpace, NH1, NDivider, NGrid, NGridItem} from "naive-ui";
 import CourseDetails from "@/components/course/CourseDetails.vue";
 import CourseLecture from "@/components/course/CourseLecture.vue";
 import { useAuthStore } from "@/stores/auth";
+import NewLectureButton from "@/components/course/NewLectureButton.vue";
 const route = useRoute();
-const {data: course, isFinished} = useCourse(route.params.id.toString());
+const {data: course, isFinished, execute:reloadCourse} = useCourse(route.params.id.toString());
 const {hasPermission} = useAuthStore();
 </script>
 <template>
@@ -27,9 +28,12 @@ const {hasPermission} = useAuthStore();
                 :course_id="course.id"
                 :lecture_id="lecture.id"
                 :is-admin = "hasPermission('course_admin')"
+                :on-update = "reloadCourse"
                 > </course-lecture>
             </n-grid-item>
         </n-grid>
+        <n-divider v-if = "hasPermission('course_admin')"></n-divider>
+        <new-lecture-button :course-id = "course.id" :on-created = "reloadCourse"></new-lecture-button>
       </n-space>
     </n-spin>
   </template>
