@@ -4,6 +4,7 @@ from datetime import datetime
 from typing import List
 import uuid
 
+
 class LectureSchema(MongoModel):
     id: UUID
     title: str
@@ -12,7 +13,7 @@ class LectureSchema(MongoModel):
     scheduled_time: datetime
 
 class LectureCreateSchema(LectureSchema):
-    id: UUID = uuid.uuid4()
+    id: UUID = None
 
 class LecturePutSchema(LectureSchema, metaclass = AllOptional):
     pass
@@ -20,19 +21,29 @@ class LecturePutSchema(LectureSchema, metaclass = AllOptional):
 class LectureListSchema(MongoListModel):
     __root__: list[LectureSchema]
 
-class CourseSchema(MongoModel):
+class CourseTeacherInfoSchema(MongoModel):
+    id: PydanticObjectId
+    display_name: str
+class CourseCampusInfoSchema(MongoModel):
+    id: PydanticObjectId
+    name: str
+class CourseEnrolledStudentsSchema(MongoModel):
+    id: PydanticObjectId
+    username: str
+    display_name: str
+class CourseDetailSchema(MongoModel):
     id: PydanticObjectId
     name: str
     uni_course_code: str
     description: str
-    teacher: PydanticObjectId
-    campus: PydanticObjectId
+    teacher: CourseTeacherInfoSchema    
+    campus: CourseCampusInfoSchema
     created_time: datetime
     publish_time: datetime
     original_price: float
     cover_image: str
     lectures: List[LectureSchema]
-    enrolled_students: List[PydanticObjectId]
+    enrolled_students: List[CourseEnrolledStudentsSchema]
 
 class CourseCreateSchema(MongoModel):
     name: str
@@ -59,8 +70,8 @@ class CourseBasicInfoSchema(MongoModel):
     name: str
     uni_course_code: str
     description: str
-    teacher: PydanticObjectId
-    campus: PydanticObjectId
+    teacher: CourseTeacherInfoSchema
+    campus: CourseCampusInfoSchema
     created_time: datetime
     publish_time: datetime
     original_price: float

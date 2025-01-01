@@ -1,8 +1,11 @@
 <script lang="ts" setup>
 import { NIcon, NLayoutSider, NMenu, NA } from "naive-ui";
-import { ref, h } from "vue";
+import { ref, h, computed} from "vue";
 import { useRoute, RouterLink, RouterView } from "vue-router";
 import {HomeOutline, BookOutline} from "@vicons/ionicons5";
+import { useAuthStore } from "@/stores/auth";
+import { storeToRefs } from "pinia";
+import { Book, Home } from "@vicons/ionicons5";
 
 interface MenuItem {
   label: string;
@@ -16,27 +19,31 @@ const route = useRoute();
 const currentKey = ref(route.fullPath.slice(1));
 
 const collapsed = ref(false); // change to true to see the collapsed sidebar; can change accordingly
-const menus: MenuItem[] = [
-{
-    label: "Home",
-    key: "home",
-    path: "/",
-    icon: HomeOutline,
-  },
-  {
-    label: "Courses",
-    key: "courses",
-    path: "/courses",
-    icon: BookOutline,
-    children: [
-      {
-        label: "Python 平时班",
-        key: "courses/62c96de8d76bd4110d7b7464",
-        path: "/courses/62c96de8d76bd4110d7b7464",
-      }
-    ],
-  }
-];
+const autStore = useAuthStore();
+const auth = storeToRefs(autStore);
+const menus = computed<MenuItem[]>(() => {
+  return [
+    {
+      label: "Home",
+      key: "home",
+      path: "/",
+      icon: Home,
+    },
+    {
+      label: "Courses",
+      key: "courses",
+      path: "/courses",
+      icon: Book,
+      children: auth.getUserInfo.value?.enrolled_courses?.map(
+        ({ course_id, course_name }) => ({
+          label:course_name,
+          key: `courses/${course_id}`,
+          path: `/courses/${course_id}`,
+        })
+      ),
+    },
+  ];
+});
 
 const renderMenu = (menus: MenuItem[]): any =>
   menus.map((item) => ({
@@ -50,7 +57,7 @@ const renderMenu = (menus: MenuItem[]): any =>
     children: item.children ? renderMenu(item.children) : undefined,
   }));
 
-  const menuOptions = renderMenu(menus);
+  const menuOptions = computed(() => renderMenu(menus.value));
 
 </script>
 

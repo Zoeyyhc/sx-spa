@@ -51,12 +51,14 @@ class UserService(BaseService):
     def update_user(self, username: str, **kwargs):
         if "password" in kwargs:
             kwargs["password"] = get_hashed_password(kwargs["password"])
-        if self.user._cls == "User.Admin" and "sys_ownser" in self.user.permissions:
+        if self.user._cls == "User.Admin" and "sys_owner" in self.user.permissions:
+            self.logger.info("Update user as sys admin")
             user = User.objects(username=username).first_or_404("User not exists")
             user.update_from_dict(**kwargs)
         elif self.user.username == username or (
             self.user._cls == "User.Admin" and "user_admin" in self.user.permissions
         ):
+            self.logger.info("Update user as user admin or self")
             user = User.objects(username=username).first_or_404("User not exists")
             kwargs.pop("permissions", None)
             user.update_from_dict(**kwargs)

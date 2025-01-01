@@ -7,16 +7,20 @@ from app.order.schema import (
     OrderSchema,
 )
 from app.order.service import order_service
-from app.user import permission_required
+from app.user import permission_required, jwt_required
+from flask import request 
 api = Namespace("orders")
 @api.route("")
 class OrdersApi(Resource):
-    @permission_required("order_admin")
+    @jwt_required()
     def get(self):
-        orders = order_service().list_orders()
+        campus = request.args.get("campus", None)
+        user = request.args.get("user", None)
+        course = request.args.get("course", None)
+        orders = order_service().list_orders(user, course, campus)
         return OrderListSchema.from_orm(orders)
     
-    @permission_required("order_admin")
+    @jwt_required()
     @validate()
     def post(self, body: OrderCreateSchema):
         order_id = str(order_service().place_order(body).id)
@@ -24,7 +28,7 @@ class OrdersApi(Resource):
     
 @api.route("/<string:order_id>")
 class OrderApi(Resource):
-    @permission_required("order_admin")
+    @jwt_required()
     def get(self, order_id):
         order = order_service().get_order(order_id)
         return OrderSchema.from_orm(order)

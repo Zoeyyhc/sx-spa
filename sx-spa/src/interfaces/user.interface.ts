@@ -7,7 +7,13 @@ export interface User{
     created_at: string;
     wx?: string;
     uni7?: string;
-    permission?: [string];
+    permissions?: [string];
     ab?: string;
     user_type: string;
+    enrolled_courses?: [
+        {
+          course_id: string;
+          course_name: string;
+        }
+      ];
 }
