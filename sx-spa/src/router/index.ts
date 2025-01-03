@@ -21,6 +21,15 @@ const router = createRouter({
           },
         },
         {
+          name: "browse",
+          path: "/browse",
+          component: () => import("../views/BrowseView.vue"),
+          meta: {
+            title: "All Courses",
+            requiresAuth: true,
+          },
+        },
+        {
           name: "courses",
           path: "/courses",
           component: () => import("../views/CoursesView.vue"),

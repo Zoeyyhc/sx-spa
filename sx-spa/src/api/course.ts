@@ -72,6 +72,9 @@ export interface CreateLectureData {
 export const useCourse = (course_id: string) =>
   useAxios<Course>(`/courses/${course_id}`, axios);
 
+export const useCourseList = () =>
+  useAxios<CourseBasicInfo[]>(`/courses`, axios);
+
 export const deleteLecture = async(course_id: string, lecture_id: string) => {
   await axios.delete(`/courses/${course_id}/lectures/${lecture_id}`);
 }

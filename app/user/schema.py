@@ -4,13 +4,17 @@ from datetime import datetime
 from typing import List, Optional   
 from app.course.schema import CourseBasicInfoSchema
 
+class UserCampusSchema(MongoModel):
+    id: PydanticObjectId
+    name: str
+
 class UserSchema(MongoModel):
     id: PydanticObjectId
     username: str
     password: SecretStr
     display_name: str
     mobile: Optional[str]
-    campus: PydanticObjectId
+    campus: UserCampusSchema
     created_at: datetime
     user_type: str
 
