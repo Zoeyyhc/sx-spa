@@ -2,11 +2,17 @@ from flask import request
 from mongoengine import ValidationError as MongoengineValidationError
 from pydantic import ValidationError as PydanticValidationError
 from werkzeug.exceptions import HTTPException
+from flask_jwt_extended.exceptions import NoAuthorizationError
 
 from .permission_exceptions import PermissionDenied
 
 
 def register_resources_exception_handler(api):
+    @api.errorhandler(NoAuthorizationError)
+    def handle_no_authorization_error(e: NoAuthorizationError):
+        request.logger.error(getattr(e, "description", str(e)))
+        return {"code": 401, "message": "Authorization Required"}, 401
+    
     @api.errorhandler(PermissionDenied)
     def handle_permission_denied(e: PermissionDenied):
         request.logger.error(getattr(e, "description", str(e)))
