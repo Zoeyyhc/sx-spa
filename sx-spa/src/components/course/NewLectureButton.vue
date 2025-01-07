@@ -14,16 +14,17 @@ import { ref } from "vue";
 const newLectureFormRef = ref(null);
 const newLectureForm = ref<CreateLectureData>({
   title: "",
-  stream_url: "",
+  streaming_url: "",
   recording_url: "",
-  scheduled_time: "",
+  scheduled_at: "",
 });
 const props = defineProps<{
   courseId: string;
   onCreated: () => void;
 }>();
+
 const handleDateUpdate = (value: number) => {
-  newLectureForm.value.scheduled_time = new Date(value)
+  newLectureForm.value.scheduled_at = new Date(value)
     .toISOString()
     .split(".")[0];
 };
@@ -55,13 +56,13 @@ const showNewLectureModal = ref(false);
         <n-form-item label="Title" path="title">
           <n-input v-model:value="newLectureForm.title"></n-input>
         </n-form-item>
-        <n-form-item label="Streaming link" path="stream_url">
-          <n-input v-model:value="newLectureForm.stream_url"></n-input>
+        <n-form-item label="Streaming link" path="streaming_url">
+          <n-input v-model:value="newLectureForm.streaming_url"></n-input>
         </n-form-item>
         <n-form-item label="Recording link" path="recording_url">
           <n-input v-model:value="newLectureForm.recording_url"></n-input>
         </n-form-item>
-        <n-form-item label="Datetime" path="scheduled_time">
+        <n-form-item label="Datetime" path="scheduled_at">
           <n-date-picker
             :on-update-value="handleDateUpdate"
             :default-value="Date.now()"

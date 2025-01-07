@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import UserInfoCard from "@/components/UserInfoCard.vue";
-import CoursesStatus from "@/components/CoursesStatus.vue";
+import UserInfoCard from "../components/UserInfoCard.vue";
+import CoursesStatus from "../components/CoursesStatus.vue";
 import CourseList from "@/components/CourseList.vue";
 import { NGrid, NGridItem, NDivider } from "naive-ui";
 import { useAuthStore } from "@/stores/auth";

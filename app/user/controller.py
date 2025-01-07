@@ -94,7 +94,7 @@ class StudentsApi(Resource):
 admins_api = Namespace("admins")
 @admins_api.route("")
 class AdminApi(Resource):
-    @permission_required("sys-owner")
+    @permission_required("sys_owner")
     def post(self):
         request_data = request.json
         if "campus" not in request_data:

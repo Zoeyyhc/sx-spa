@@ -1,20 +1,20 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import layout from '@/layout/index.vue';
+import { createRouter, createWebHistory } from "vue-router";
+import Layout from "@/layout/index.vue";
 import { useAuthStore } from "@/stores/auth";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
-      name: 'layout',
-      redirect: '/home',
-      component: layout,
+      path: "/",
+      name: "layout",
+      redirect: "/home",
+      component: Layout,
       children: [
         {
-          name: 'home',
-          path: '/home',
-          component: () => import('../views/HomeView.vue'),
+          name: "home",
+          path: "/home",
+          component: () => import("../views/HomeView.vue"),
           meta: {
             requiresAuth: true,
             title: "Home",
@@ -47,27 +47,23 @@ const router = createRouter({
             title: "Course Page",
           },
         },
-      ]
-      
+      ],
     },
     {
-      path: '/login',
-      name: 'login', 
-      component: () => import('../views/LoginView.vue'),
-      meta:{
+      path: "/login",
+      name: "login",
+      component: () => import("../views/LoginView.vue"),
+      meta: {
         requiresAuth: false,
         title: "Login",
-      }
+      },
     },
   ],
-})
-router.afterEach((to) => {
-  document.title = to.meta.title || to.name?.toString() || "ShangxueOnline";
 });
 
 router.beforeEach((to) => {
   const authStore = useAuthStore();
-  if (to.meta.requiresAuth && !authStore.isLoggedin) {
+  if (to.meta.requiresAuth && !authStore.isLoggedIn) {
     return {
       name: "login",
       query: { redirect: to.fullPath },
@@ -75,4 +71,8 @@ router.beforeEach((to) => {
   }
 });
 
-export default router
+router.afterEach((to) => {
+  document.title = to.meta.title || to.name?.toString() || "ShangxueOnline";
+});
+
+export default router;

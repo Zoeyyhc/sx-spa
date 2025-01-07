@@ -3,15 +3,18 @@ import type { CourseBasicInfo } from "@/api/course";
 import type { User } from "@/interfaces/user.interface";
 import { NGrid, NGridItem, NCard, NA, NP, NSpace, NButton, NSpin } from "naive-ui";
 import { useRouter } from "vue-router";
+import { ref } from 'vue';
 
-interface Props {
-  userInfo?: User | null;
+// Add loading state
+const loading = ref(false);
+
+// Make props optional with defaults
+const props = withDefaults(defineProps<{
+  userInfo?: User;
   courses?: CourseBasicInfo[];
-}
-
-const props = withDefaults(defineProps<Props>(), {
+}>(), {
   courses: () => [],
-  userInfo: null
+  userInfo: undefined
 });
 
 const router = useRouter();
@@ -19,6 +22,7 @@ const router = useRouter();
 const isEnrolledCourse = (course_id: string) => {
   if (!props.userInfo) return false;
   if (props.userInfo.user_type === "User.Admin") return true;
+  console.log(props.userInfo.enrolled_courses);
   return props.userInfo.enrolled_courses?.some(course => course.id === course_id) ?? false;
 };
 
@@ -28,13 +32,13 @@ const handleCourseClick = (course_id: string) => {
   }
 };
 
-console.log(props.courses);
+
 </script>
 
 <template>
-  <n-spin :show="!courses">
-    <n-grid v-if="courses && courses.length > 0" :cols="3" :x-gap="12" :y-gap="8">
-      <n-grid-item v-for="course in props.courses" :key="course.id">
+  <n-spin :show="loading">
+    <n-grid :cols="3" :x-gap="12" :y-gap="8" v-if="courses && courses.length">
+      <n-grid-item v-for="course in courses" :key="course.id">
         <n-card :title="course.name">
           <template #cover>
             <n-a @click="handleCourseClick(course.id)">
@@ -48,15 +52,20 @@ console.log(props.courses);
               class="h-8"
               v-if="!isEnrolledCourse(course.id)"
             >
-              <span class="text-orange-400 py-2">${{ course.original_price }}</span>
+              <span class="text-orange-400 py-2">
+                ${{ course.original_price }}
+              </span>
               <n-button size="small" type="success">Purchase now</n-button>
             </n-space>
             <n-space class="h-8" align="center" v-else>
               <span class="text-green-500">Enrolled</span>
             </n-space>
           </template>
-          <n-p class="mt-1">Teacher: {{ course.teacher?.display_name }}</n-p>
-          <n-p>Description: {{ course.description }}</n-p>
+          <n-p class="mt-1">
+            Teacher: {{ course.teacher?.display_name || 'Not assigned' }}
+            Course ID: {{ course.id }}
+          </n-p>
+          <n-p>Description: {{ course.description || 'No description available' }}</n-p>
         </n-card>
       </n-grid-item>
     </n-grid>

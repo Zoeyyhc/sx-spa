@@ -1,5 +1,4 @@
 import { useAxios } from "@vueuse/integrations/useAxios";
-import type { AxiosProgressEvent } from "axios";
 import axios from "../utils/http";
 
 export interface CourseBasicInfo {
@@ -14,7 +13,6 @@ export interface CourseBasicInfo {
   original_price: number;
   cover_image: string;
 }
-
 export interface Course {
   id: string;
   name: string;
@@ -40,20 +38,12 @@ export interface Campus {
   name: string;
 }
 
-export interface LectureAttachment {
-  type: string;
-  name: string;
-  file_name: string;
-  signed_url: string;
-}
-
 export interface Lecture {
   id: string;
   title: string;
-  stream_url: string;
+  streaming_url: string;
   recording_url: string;
   scheduled_time: string;
-  attachments: LectureAttachment[];
 }
 
 export interface EnrolledStudent {
@@ -64,9 +54,9 @@ export interface EnrolledStudent {
 
 export interface CreateLectureData {
   title: string;
-  stream_url: string;
+  streaming_url: string;
   recording_url: string;
-  scheduled_time: string;
+  scheduled_at: string;
 }
 
 export const useCourse = (course_id: string) =>
@@ -74,15 +64,13 @@ export const useCourse = (course_id: string) =>
 
 export const useCourseList = () =>
   useAxios<CourseBasicInfo[]>(`/courses`, axios);
-
-export const deleteLecture = async(course_id: string, lecture_id: string) => {
+export const deleteLecture = async (course_id: string, lecture_id: string) =>
   await axios.delete(`/courses/${course_id}/lectures/${lecture_id}`);
-}
 
 export const createLecture = async (
   course_id: string,
   data: CreateLectureData
 ) =>
   await (
-    await axios.post<string>(`/courses/${course_id}/lectures`, data)
+    await axios.post<String>(`/courses/${course_id}/lectures`, data)
   ).data;
