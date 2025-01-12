@@ -53,7 +53,7 @@ class StudentEnrolledCoursesSchema(MongoModel):
 class StudentSchema(UserSchema):
     wx: str
     uni: str
-    enrolled_courses: List[StudentEnrolledCoursesSchema]
+    enrolled_courses: List[CourseBasicInfoSchema]
 
 class StudentCreateSchema(UserCreateSchema):
     wx: str
