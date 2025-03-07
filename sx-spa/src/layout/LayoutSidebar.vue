@@ -4,7 +4,7 @@ import { ref, h, computed, watchEffect} from "vue";
 import { useRoute, RouterLink, RouterView } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 import { storeToRefs } from "pinia";
-import { Book, Home, Grid } from "@vicons/ionicons5";
+import { Book, Home, Grid, Cart } from "@vicons/ionicons5";
 
 interface MenuItem {
   label: string;
@@ -54,6 +54,12 @@ const menus = computed<MenuItem[]>(() => {
         })
       ),
     },
+    {
+      label: "Orders",
+      key: "orders",
+      icon: Cart,
+      path: "/orders",
+    },
   ];
 });
 
@@ -74,9 +80,9 @@ const renderMenu = (menus: MenuItem[]): any =>
 </script>
 
 <template>
-  <n-layout-sider 
-  bordered 
-  :width = "240" 
+  <n-layout-sider
+  bordered
+  :width = "240"
   :native-scrollerbar="false"
   show-trigger
   collapse-mode="width"
@@ -89,7 +95,7 @@ const renderMenu = (menus: MenuItem[]): any =>
         <span>ShangxueOnline</span>
       </n-a>
     </router-link>
-    
+
   <n-menu
       :value="currentKey"
       :options="menuOptions"
@@ -100,7 +106,7 @@ const renderMenu = (menus: MenuItem[]): any =>
         }
       "
     />
-  
+
 
   </n-layout-sider>
 </template>

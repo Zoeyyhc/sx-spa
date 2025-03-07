@@ -47,6 +47,15 @@ const router = createRouter({
             title: "Course Page",
           },
         },
+        {
+          name: "orders",
+          path: "/orders",
+          component: () => import("../views/OrdersView.vue"),
+          meta: {
+            requiresAuth: true,
+            title: "Orders",
+          },
+        },
       ],
     },
     {

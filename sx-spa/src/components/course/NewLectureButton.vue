@@ -17,6 +17,7 @@ const newLectureForm = ref<CreateLectureData>({
   streaming_url: "",
   recording_url: "",
   scheduled_at: "",
+  attachments: [],
 });
 const props = defineProps<{
   courseId: string;

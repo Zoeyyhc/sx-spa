@@ -1,5 +1,6 @@
 import type { CourseBasicInfo } from "@/api/course";
 export interface User{
+  id: string;
   username: string;
   password: string | null;
   display_name: string;

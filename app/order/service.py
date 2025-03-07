@@ -1,6 +1,7 @@
 from typing import List
 from flask_jwt_extended import get_current_user
 from app.core.service import BaseService
+from app.core.page import paginate
 from app.course.model import Course
 from app.order.model import Order
 from app.order.schema import OrderCreateSchema, OrderPaymentSchema
@@ -11,7 +12,7 @@ class OrderService(BaseService):
     def __init__(self, user):
         super().__init__(OrderService.__name__, user)
     
-    def get_orders_query(self,**kwargs):
+    def get_order_query(self,**kwargs):
         if self.user._cls == "User.Admin" and "order_admin" in self.user.permissions:
             return Order.objects()
         else:
@@ -29,7 +30,7 @@ class OrderService(BaseService):
             raise PermissionDenied()
     
     def list_orders(
-        self, user: str = None, course: str = None, campus: str = None
+        self, user: str = None, course: str = None, campus: str = None, paid: str = None, page: int = 1
     ) -> List[Order]:
         self.logger.info("Fetching orders")
         querys = {}
@@ -39,10 +40,12 @@ class OrderService(BaseService):
             querys["course"] = course
         if campus is not None:
             querys["campus"] = campus
-        return list(self.get_orders_query(**querys))
+        if paid is not None:
+            querys["paid"] = paid.lower() == "true"
+        return paginate(self.get_order_query(**querys), page_num=page)
     
     def get_order(self, order_id) -> Order:
-        return self.get_orders_query(id=order_id).first_or_404("Order not exists")
+        return self.get_order_query(id=order_id).first_or_404("Order not exists")
     
     def delete_order(self, order_id) -> int:
         order = Order.objects(id=order_id).first_or_404("Order not exists")

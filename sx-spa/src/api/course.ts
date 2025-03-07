@@ -1,4 +1,5 @@
 import { useAxios } from "@vueuse/integrations/useAxios";
+import type { AxiosProgressEvent } from "axios";
 import axios from "../utils/http";
 
 export interface CourseBasicInfo {
@@ -44,6 +45,7 @@ export interface Lecture {
   streaming_url: string;
   recording_url: string;
   scheduled_time: string;
+  attachments: LectureAttachment[];
 }
 
 export interface EnrolledStudent {
@@ -57,6 +59,14 @@ export interface CreateLectureData {
   streaming_url: string;
   recording_url: string;
   scheduled_at: string;
+  attachments: LectureAttachment[];
+}
+
+export interface LectureAttachment {
+  type: string;
+  name: string;
+  file_name: string;
+  signed_url: string;
 }
 
 export const useCourse = (course_id: string) =>
@@ -74,3 +84,25 @@ export const createLecture = async (
   await (
     await axios.post<String>(`/courses/${course_id}/lectures`, data)
   ).data;
+
+export const uploadAttachment = async (
+  courseId: string,
+  lectureId: string,
+  file: File,
+  name: string,
+  type: string,
+  onUploadProgress: (progressEvent: AxiosProgressEvent) => void
+) => {
+  const form = new FormData();
+  form.append("file", file);
+  form.append("name", name);
+  form.append("type", type);
+  const reposne = await axios.post(
+    `/courses/${courseId}/lectures/${lectureId}/attachments`,
+    form,
+    {
+      onUploadProgress,
+    }
+  );
+  return reposne.data;
+};

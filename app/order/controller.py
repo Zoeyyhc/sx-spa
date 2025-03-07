@@ -17,8 +17,10 @@ class OrdersApi(Resource):
         campus = request.args.get("campus", None)
         user = request.args.get("user", None)
         course = request.args.get("course", None)
-        orders = order_service().list_orders(user, course, campus)
-        return OrderListSchema.from_orm(orders)
+        paid = request.args.get("paid", None)
+        page = int(request.args.get("page", 1))
+        orders = order_service().list_orders(user, course, campus, paid, page)
+        return OrderListSchema(**orders)
     
     @jwt_required()
     @validate()

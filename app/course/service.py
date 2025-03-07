@@ -2,9 +2,12 @@ from app.core.service import BaseService
 from app.user.model import User, Teacher
 from app.course.schema import CourseCreateSchema, CoursePutSchema, LectureSchema, LectureCreateSchema, LecturePutSchema
 from app.campus.model import Campus
-from app.course.model import Course, Lecture
+from app.course.model import Course, Lecture, LectureAttachment
+from app.core.storage import upload_file_to_s3
 from flask_jwt_extended import get_current_user
 import uuid
+from werkzeug.datastructures import FileStorage
+from werkzeug.exceptions import NotFound
 
 class CourseService(BaseService):
 
@@ -85,6 +88,38 @@ class CourseService(BaseService):
             .update_one(**update_action)
         )
 
+    def upload_lecture_attachment(
+        self, course_id: str, lecture_id: str, file: FileStorage, file_type: str, name
+    ):
+        course: Course = Course.objects(id=course_id).first_or_404("Course not exists")
+        lecture: Lecture = course.lectures.filter(id=lecture_id).first()
+        if lecture is None:
+            raise NotFound("Lecture not exists")
+
+        url = upload_file_to_s3(
+            file, f"courses/{course_id}/lectures/{lecture_id}/attachments"
+        )
+        attachment = LectureAttachment(
+            name=name is not None and name or file.filename,
+            filename=file.filename,
+            type=file_type,
+            bucket_url=url,
+        )
+        Course.objects(id=course_id).filter(lectures__id=lecture_id).update_one(
+            push__lectures__S__attachments=attachment
+        )
+
+    def delete_attachment(self, course_id: str, lecture_id: str, filename: str):
+        course: Course = Course.objects(id=course_id).first_or_404("Course not exists")
+        lecture: Lecture = course.lectures.filter(id=lecture_id).first()
+
+        if lecture is None:
+            raise NotFound("Lecture not exists")
+
+        del_num = lecture.attachments.filter(filename=filename).delete()
+        course.save()
+        return del_num, 200
+    
 def course_service() -> CourseService:
     print("current user is: ", get_current_user())
     return CourseService(get_current_user())

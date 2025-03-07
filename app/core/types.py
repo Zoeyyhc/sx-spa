@@ -31,6 +31,12 @@ class MongoModel(BaseModel):
 class MongoListModel(MongoModel):
     def dict(self, *args, **kwargs):
         return super().dict(*args, **kwargs)["__root__"]
+
+class PaginatedModel(MongoModel):
+    total: int
+    page: int
+    pages: int
+    limit: int
     
 class AllOptional(ModelMetaclass):
     def __new__(self, name, bases, namespace, **kwargs):

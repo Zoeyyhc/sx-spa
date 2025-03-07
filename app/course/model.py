@@ -16,13 +16,19 @@ from mongoengine import (
 from app.campus.model import Campus
 from app.user.model import Teacher, Student   
 
+class LectureAttachment(EmbeddedDocument):
+    name = StringField()
+    type = StringField()
+    filename = StringField()
+    bucket_url = StringField()
+
 class Lecture(EmbeddedDocument):
     id = UUIDField(required=True, binary=False, default = uuid.uuid4) # EmbeddedDocument does not have id field
     title = StringField(required=True, max_length=200)
     stream_url = StringField(required=True, max_length=500)
     recording_url = StringField(required=True, max_length=500)
     scheduled_time = DateTimeField()
-
+    attachments = EmbeddedDocumentListField(LectureAttachment, default=[])
 
 class Course(Document):
     name = StringField(required=True, max_length=200)

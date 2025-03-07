@@ -73,4 +73,25 @@ class CourseLectureApi(Resource):
     @validate()
     def put(self, course_id, lecture_id, body: LecturePutSchema):
         return course_service().update_lecture(course_id, lecture_id, body), 200
-    
+
+
+@api.route("/<string:course_id>/lectures/<string:lecture_id>/attachments")
+class LectureAttachmentListApi(Resource):
+    @permission_required("course_admin")
+    def post(self, course_id, lecture_id):
+        course_service().upload_lecture_attachment(
+            course_id,
+            lecture_id,
+            request.files["file"],
+            request.form.get("type", ""),
+            request.form.get("name", None),
+        )
+
+
+@api.route(
+    "/<string:course_id>/lectures/<string:lecture_id>/attachments/<string:filename>"
+)
+class LectureAttachmentApi(Resource):
+    @permission_required("course_admin")
+    def delete(self, course_id, lecture_id, filename):
+        return course_service().delete_attachment(course_id, lecture_id, filename)
